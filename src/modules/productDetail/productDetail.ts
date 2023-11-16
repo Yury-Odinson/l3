@@ -4,6 +4,7 @@ import { formatPrice } from '../../utils/helpers';
 import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
+import { favorites } from '../favorites';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -32,6 +33,7 @@ class ProductDetail extends Component {
     this.view.description.innerText = description;
     this.view.price.innerText = formatPrice(salePriceU);
     this.view.btnBuy.onclick = this._addToCart.bind(this);
+    this.view.btnFav.onclick = this._isFavorite.bind(this);
 
     const isInCart = await cartService.isInCart(this.product);
 
@@ -55,6 +57,32 @@ class ProductDetail extends Component {
 
     cartService.addProduct(this.product);
     this._setInCart();
+  }
+
+  private _isFavorite() {
+    if (!this.product) return;
+
+    const isFavorites = favorites.includes(this.product.id);
+    if (!isFavorites) {
+      this._addToFav();
+    } else {
+      this._remToFav();
+    }
+  }
+
+  private _addToFav() {
+    if (!this.product) return;
+
+    favorites.push(this.product.id);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }
+
+  private _remToFav() {
+    if (!this.product) return;
+
+    let index = favorites.indexOf(this.product.id);
+    favorites.splice(index, 1);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
   }
 
   private _setInCart() {
