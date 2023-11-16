@@ -4,7 +4,7 @@ import { formatPrice } from '../../utils/helpers';
 import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
-import { favorites } from '../favorites';
+import { favorites } from '../favorites/favorites';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -65,8 +65,10 @@ class ProductDetail extends Component {
     const isFavorites = favorites.includes(this.product.id);
     if (!isFavorites) {
       this._addToFav();
+      this.view.favIcon.setAttribute("xlink:href", "#heartActive");
     } else {
       this._remToFav();
+      this.view.favIcon.setAttribute("xlink:href", "#heart");
     }
   }
 
