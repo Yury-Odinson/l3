@@ -5,6 +5,7 @@ import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
 import { favorites } from '../favorites/favorites';
+import { visibleFavLink } from '../_header';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -70,6 +71,7 @@ class ProductDetail extends Component {
       this._remToFav();
       this.view.favIcon.setAttribute("xlink:href", "#heart");
     }
+    visibleFavLink();
   }
 
   private _addToFav() {
