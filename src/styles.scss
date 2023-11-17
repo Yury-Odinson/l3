@@ -120,7 +120,14 @@ img {
   }
 }
 
-.cart {
+.header__buttons {
+  display: flex;
+  gap: 30px;
+  // border: 1px solid red;
+}
+
+.cart,
+.cartFav {
   position: relative;
 }
 

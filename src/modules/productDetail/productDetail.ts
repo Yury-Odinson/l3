@@ -4,8 +4,7 @@ import { formatPrice } from '../../utils/helpers';
 import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
-import { favorites } from '../favorites/favorites';
-import { visibleFavLink } from '../_header';
+import { cartFavService } from '../../services/cartFav.service';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -34,11 +33,13 @@ class ProductDetail extends Component {
     this.view.description.innerText = description;
     this.view.price.innerText = formatPrice(salePriceU);
     this.view.btnBuy.onclick = this._addToCart.bind(this);
-    this.view.btnFav.onclick = this._isFavorite.bind(this);
+    this.view.btnFav.onclick = this._addToFav.bind(this);
 
     const isInCart = await cartService.isInCart(this.product);
+    const isInFav = await cartFavService.isInCart(this.product);
 
     if (isInCart) this._setInCart();
+    if (isInFav) this._setInFav();
 
     fetch(`/api/getProductSecretKey?id=${id}`)
       .then((res) => res.json())
@@ -60,39 +61,30 @@ class ProductDetail extends Component {
     this._setInCart();
   }
 
-  private _isFavorite() {
+  private async _addToFav() {
     if (!this.product) return;
 
-    const isFavorites = favorites.includes(this.product.id);
-    if (!isFavorites) {
-      this._addToFav();
-      this.view.favIcon.setAttribute("xlink:href", "#heartActive");
+    const isFavorites = await cartFavService.isInCart(this.product);
+    console.log(isFavorites);
+    if (isFavorites) {
+      cartFavService.removeFavProduct(this.product);
+      console.log("add");
+      // this._setInFav();
     } else {
-      this._remToFav();
-      this.view.favIcon.setAttribute("xlink:href", "#heart");
+      cartFavService.addFavProduct(this.product);
+      console.log("remove");
     }
-    visibleFavLink();
-  }
-
-  private _addToFav() {
-    if (!this.product) return;
-
-    favorites.push(this.product.id);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }
-
-  private _remToFav() {
-    if (!this.product) return;
-
-    let index = favorites.indexOf(this.product.id);
-    favorites.splice(index, 1);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
   }
 
   private _setInCart() {
     this.view.btnBuy.innerText = '✓ В корзине';
     this.view.btnBuy.disabled = true;
   }
+
+  private _setInFav() {
+    console.log("---");
+  }
+
 }
 
 export const productDetailComp = new ProductDetail(html);
