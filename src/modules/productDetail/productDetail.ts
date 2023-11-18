@@ -5,6 +5,7 @@ import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
 import { cartFavService } from '../../services/cartFav.service';
+import { setFavCounter } from '../../index';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -36,10 +37,8 @@ class ProductDetail extends Component {
     this.view.btnFav.onclick = this._addToFav.bind(this);
 
     const isInCart = await cartService.isInCart(this.product);
-    const isInFav = await cartFavService.isInCart(this.product);
 
     if (isInCart) this._setInCart();
-    if (isInFav) this._setInFav();
 
     fetch(`/api/getProductSecretKey?id=${id}`)
       .then((res) => res.json())
@@ -65,24 +64,20 @@ class ProductDetail extends Component {
     if (!this.product) return;
 
     const isFavorites = await cartFavService.isInCart(this.product);
-    console.log(isFavorites);
+    const headerFavCounter = document.querySelector(".cartFav");
+
     if (isFavorites) {
       cartFavService.removeFavProduct(this.product);
-      console.log("add");
-      // this._setInFav();
+      setFavCounter("__wb-cartFav");
     } else {
       cartFavService.addFavProduct(this.product);
-      console.log("remove");
+      headerFavCounter?.classList.remove("favIsEmpty");
     }
   }
 
   private _setInCart() {
     this.view.btnBuy.innerText = '✓ В корзине';
     this.view.btnBuy.disabled = true;
-  }
-
-  private _setInFav() {
-    console.log("---");
   }
 
 }
