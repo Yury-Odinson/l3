@@ -23,8 +23,6 @@ class Favorites extends Component {
             productComp.render();
             productComp.attach(this.view.cartFav);
         });
-
-
     }
 }
 
