@@ -46,4 +46,19 @@
       margin-right: 10px;
     }
   }
+
+  &.is__table {
+    display: flex;
+
+    .product__info {
+      margin-top: 10px;
+    }
+
+    .product__img {
+      width: 100%;
+      max-width: 180px;
+      margin-bottom: 0;
+      margin-right: 10px;
+    }
+  }
 }
