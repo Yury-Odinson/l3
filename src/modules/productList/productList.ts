@@ -3,6 +3,7 @@ import { View } from '../../utils/view';
 import html from './productList.tpl.html';
 import { ProductData } from 'types';
 import { Product } from '../product/product';
+import { observer } from '../../utils/observer';
 
 export class ProductList {
   view: View;
@@ -21,6 +22,14 @@ export class ProductList {
   update(products: ProductData[]) {
     this.products = products;
     this.render();
+    // console.log(products)
+    // products.forEach(elem => {
+    //   observer.observe(elem)
+    // })
+    const productsDOM = document.querySelectorAll(".product");
+    productsDOM.forEach(elem => {
+      observer.observe(elem);
+    })
   }
 
   render() {
