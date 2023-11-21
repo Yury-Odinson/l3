@@ -3,6 +3,7 @@ import { Component } from '../component';
 import html from './homepage.tpl.html';
 
 import { ProductList } from '../productList/productList';
+import { userService } from '../../services/user.service';
 
 class Homepage extends Component {
   popularProducts: ProductList;
@@ -15,24 +16,26 @@ class Homepage extends Component {
   }
 
   render() {
-    fetch('/api/getPopularProducts', {
+    userService.init().then(() => {
+      fetch('/api/getPopularProducts', {
         headers: {
           'x-userid': window.userId,
         }
-  })
-      .then((res) => res.json())
-      .then((products) => {
-        this.popularProducts.update(products);
-      });
+      })
+        .then((res) => res.json())
+        .then((products) => {
+          this.popularProducts.update(products);
+        });
 
-    const isSuccessOrder = new URLSearchParams(window.location.search).get('isSuccessOrder');
-    if (isSuccessOrder != null) {
-      const $notify = addElement(this.view.notifies, 'div', { className: 'notify' });
-      addElement($notify, 'p', {
-        innerText:
-          'Заказ оформлен. Деньги спишутся с вашей карты, менеджер может позвонить, чтобы уточнить детали доставки'
-      });
-    }
+      const isSuccessOrder = new URLSearchParams(window.location.search).get('isSuccessOrder');
+      if (isSuccessOrder != null) {
+        const $notify = addElement(this.view.notifies, 'div', { className: 'notify' });
+        addElement($notify, 'p', {
+          innerText:
+            'Заказ оформлен. Деньги спишутся с вашей карты, менеджер может позвонить, чтобы уточнить детали доставки'
+        });
+      }
+    })
   }
 }
 
