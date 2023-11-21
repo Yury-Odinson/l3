@@ -4,6 +4,8 @@ import { formatPrice } from '../../utils/helpers';
 import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
+import { cartFavService } from '../../services/cartFav.service';
+import { setFavCounter } from '../../index';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -32,10 +34,18 @@ class ProductDetail extends Component {
     this.view.description.innerText = description;
     this.view.price.innerText = formatPrice(salePriceU);
     this.view.btnBuy.onclick = this._addToCart.bind(this);
+    this.view.btnFav.onclick = this._addToFav.bind(this);
 
     const isInCart = await cartService.isInCart(this.product);
 
     if (isInCart) this._setInCart();
+
+    const isFavorites = await cartFavService.isInCart(this.product);
+    if (isFavorites) {
+      this.view.favIcon.setAttribute("xlink:href", "#heartActive");
+    } else {
+      this.view.favIcon.setAttribute("xlink:href", "#heart");
+    }
 
     fetch(`/api/getProductSecretKey?id=${id}`)
       .then((res) => res.json())
@@ -57,10 +67,28 @@ class ProductDetail extends Component {
     this._setInCart();
   }
 
+  private async _addToFav() {
+    if (!this.product) return;
+
+    const isFavorites = await cartFavService.isInCart(this.product);
+    const headerFavCounter = document.querySelector(".cartFav");
+
+    if (isFavorites) {
+      cartFavService.removeFavProduct(this.product);
+      this.view.favIcon.setAttribute("xlink:href", "#heart");
+      setFavCounter("__wb-cartFav");
+    } else {
+      cartFavService.addFavProduct(this.product);
+      this.view.favIcon.setAttribute("xlink:href", "#heartActive");
+      headerFavCounter?.classList.remove("favIsEmpty");
+    }
+  }
+
   private _setInCart() {
     this.view.btnBuy.innerText = '✓ В корзине';
     this.view.btnBuy.disabled = true;
   }
+
 }
 
 export const productDetailComp = new ProductDetail(html);
