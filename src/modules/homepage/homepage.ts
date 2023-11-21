@@ -3,18 +3,23 @@ import { Component } from '../component';
 import html from './homepage.tpl.html';
 
 import { ProductList } from '../productList/productList';
+import { Tips } from '../tips/tips';
 
 class Homepage extends Component {
   popularProducts: ProductList;
+  tips?: Tips;
 
   constructor(props: any) {
     super(props);
 
     this.popularProducts = new ProductList();
     this.popularProducts.attach(this.view.popular);
+
+    this.tips = new Tips();
   }
 
   render() {
+    this.tips?.render();
     fetch('/api/getPopularProducts')
       .then((res) => res.json())
       .then((products) => {
