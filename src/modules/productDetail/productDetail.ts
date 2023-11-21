@@ -40,6 +40,13 @@ class ProductDetail extends Component {
 
     if (isInCart) this._setInCart();
 
+    const isFavorites = await cartFavService.isInCart(this.product);
+    if (isFavorites) {
+      this.view.favIcon.setAttribute("xlink:href", "#heartActive");
+    } else {
+      this.view.favIcon.setAttribute("xlink:href", "#heart");
+    }
+
     fetch(`/api/getProductSecretKey?id=${id}`)
       .then((res) => res.json())
       .then((secretKey) => {
@@ -68,9 +75,11 @@ class ProductDetail extends Component {
 
     if (isFavorites) {
       cartFavService.removeFavProduct(this.product);
+      this.view.favIcon.setAttribute("xlink:href", "#heart");
       setFavCounter("__wb-cartFav");
     } else {
       cartFavService.addFavProduct(this.product);
+      this.view.favIcon.setAttribute("xlink:href", "#heartActive");
       headerFavCounter?.classList.remove("favIsEmpty");
     }
   }
