@@ -4,12 +4,18 @@ import { ViewTemplate } from '../../utils/viewTemplate';
 
 export class Tips {
     view: View;
+    tips: any;
 
     constructor() {
         this.view = new ViewTemplate(html).cloneView();
     }
 
+    attach($root: HTMLElement) {
+        $root.innerHTML = '';
+        $root.appendChild(this.view.root);
+    }
+
     render() {
-        console.log(this.view)
+        ViewTemplate.applyText(this.view.root)
     }
 }

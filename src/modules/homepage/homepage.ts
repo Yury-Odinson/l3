@@ -16,10 +16,10 @@ class Homepage extends Component {
     this.popularProducts.attach(this.view.popular);
 
     this.tips = new Tips();
+    this.tips.attach(this.view.search);
   }
 
   render() {
-    this.tips?.render();
     fetch('/api/getPopularProducts')
       .then((res) => res.json())
       .then((products) => {
