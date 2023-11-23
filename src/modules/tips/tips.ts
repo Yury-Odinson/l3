@@ -8,7 +8,21 @@ export class Tips {
 
     constructor() {
         this.view = new ViewTemplate(html).cloneView();
-        this.tips = ["Волшебная палочка", "знания js", "вселенский разум"];
+        this.tips = ["Волшебная палочка", "Чехол для всего", "вселенский разум"];
+
+        this.tips.forEach((tip, index) => {
+            const tipElement = this.view[`tip${index + 1}`];
+            if (tipElement) {
+                tipElement.innerHTML = tip;
+                tipElement.addEventListener("click", () => {
+                    this.handlerChoice(tipElement);
+                });
+            }
+        });
+    }
+
+    private handlerChoice(elem: html) {
+        return console.log(`Вы выбрали ${elem.innerText}`);
     }
 
     attach($root: HTMLElement) {
@@ -17,20 +31,5 @@ export class Tips {
         this.render();
     }
 
-    private _createTip(tip: string) {
-        const element = document.createElement("span");
-        element.classList.add("tip__item");
-        element.textContent = tip;
-        return element;
-    }
-
-
-    render() {
-        this.view.root.innerHTML = "";
-        const test = this._createTip(this.tips[1])
-        console.log(test)
-
-        const result = `Например, ${this.tips[0]}`;
-        this.view.root.innerHTML = result;
-    }
+    render() { }
 }
