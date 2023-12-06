@@ -35,7 +35,6 @@ export class ProductList {
                 .then((res) => res.json())
                 .then((secretKey) => {
                   if (Object.keys(obj.log).length === 0) {
-                    console.log(obj.log.length)
                     eventService.sendEvent("viewCard", {obj, secretKey})
                   } else {
                     eventService.sendEvent("viewCardPromo", {obj, secretKey})
