@@ -3,6 +3,7 @@ import { View } from '../../utils/view';
 import html from './productList.tpl.html';
 import { ProductData } from 'types';
 import { Product } from '../product/product';
+import { eventService } from '../../services/event.service';
 
 export class ProductList {
   view: View;
@@ -21,6 +22,35 @@ export class ProductList {
   update(products: ProductData[]) {
     this.products = products;
     this.render();
+
+    const observer: any = new IntersectionObserver((elements => {
+      elements.forEach(element => {
+        if (element.isIntersecting) {
+          const href: any = element.target.getAttribute("href");
+          const productId = parseInt(href.match(/\d+/));
+
+          products.some((obj) => {
+            if (obj.id === productId) {
+              fetch(`/api/getProductSecretKey?id=${productId}`)
+                .then((res) => res.json())
+                .then((secretKey) => {
+                  if (Object.keys(obj.log).length === 0) {
+                    eventService.sendEvent("viewCard", {obj, secretKey})
+                  } else {
+                    eventService.sendEvent("viewCardPromo", {obj, secretKey})
+                  }
+                })
+            }
+          });
+
+        }
+      });
+    }), { threshold: 1.0 });
+
+    const productsDOM = document.querySelectorAll(".product");
+    productsDOM.forEach(async elem => {
+      observer.observe(elem);
+    })
   }
 
   render() {
